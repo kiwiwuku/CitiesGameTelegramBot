@@ -63,5 +63,12 @@ namespace CitiesBot
             IEnumerable<string> list = File.ReadAllLines(citiespath);
             return list.Contains(CityNameHandler(name.ToLower()));
         }
+        public string GetRandomCity()
+        {
+            Random rnd = new Random();
+            string[] list = File.ReadAllLines(bigcitiespath);
+            string city = list[rnd.Next(list.Length)];
+            return city;
+        }
     }
 }

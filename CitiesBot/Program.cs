@@ -16,6 +16,11 @@ namespace CitiesBot
         {
             Initialize();
             Console.WriteLine("Бот запущен");
+            while (true)
+            {
+                Console.WriteLine(manager.GetRandomCity());
+                Console.ReadKey();
+            }
         }
         static private void Initialize()
         {

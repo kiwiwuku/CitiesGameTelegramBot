@@ -28,28 +28,37 @@ namespace CitiesBot
         static async private void Bot_GotMessage(Telega bot, string msg, long chatid)
         {
             string answer;
-            if (lastEndLetter == msg.First() || lastEndLetter == ' ')
+            if (msg != "сброс!")
             {
-                if (manager.IsCityUsed(msg))
-                    answer = "Уже было";
-                else if (!manager.IsCityExist(msg))
-                    answer = "Не знаю такой город:(";
-                else
+                if (lastEndLetter == msg.First() || lastEndLetter == ' ')
                 {
-                    answer = manager.GetRandomCity(msg);
-                    lastEndLetter = manager.GetLastLetter(answer).ToCharArray()[0];
-                    if (answer == "404")
+                    if (manager.IsCityUsed(msg))
+                        answer = "Уже было";
+                    else if (!manager.IsCityExist(msg))
+                        answer = "Не знаю такой город:(";
+                    else
                     {
-                        answer = "Ты выиграл! Начинаем заново";
-                        manager.StartAgain();
-                        lastEndLetter = ' ';
+                        answer = manager.GetRandomCity(msg);
+                        lastEndLetter = manager.GetLastLetter(answer).ToCharArray()[0];
+                        if (answer == "404")
+                        {
+                            answer = "Ты выиграл! Начинаем заново";
+                            manager.StartAgain();
+                            lastEndLetter = ' ';
+                        }
                     }
                 }
+                else
+                    answer = "Что то тут не так";
             }
             else
-                answer = "Что то тут не так";
+            {
+                manager.StartAgain();
+                lastEndLetter = ' ';
+                answer = "Начинаем заново!";
+            }
             await Task.Run(() =>
-                        bot.TextMessage(answer, chatid));
+                            bot.TextMessage(answer, chatid));
         }
     }
 }

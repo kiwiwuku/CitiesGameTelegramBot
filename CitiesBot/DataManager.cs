@@ -78,10 +78,8 @@ namespace CitiesBot
         }
         public string GetRandomCity(string name)
         {
-            string symbol = name.Last().ToString();
+            string symbol = GetLastLetter(name);
             Random rnd = new Random();
-            if (symbol == "ь" || symbol == "ъ" || symbol == "ы")
-                symbol = name[name.Length - 2].ToString();
             string[] list = BigCities.
                 Where(e => e.StartsWith(symbol.ToUpper())).ToArray();
             if (list.Length == 0)
@@ -92,8 +90,29 @@ namespace CitiesBot
                     return "404";
             }
             string city = list[rnd.Next(list.Length)];
+            if (IsCityUsed(city))
+            {
+                for (int i = 0; i < 15; i++)
+                {
+                    string tempname = list[rnd.Next(list.Length)];
+                    if (!IsCityUsed(tempname))
+                    {
+                        city = tempname;
+                        break;
+                    }
+                    else if (i == 14)
+                        return "404";
+                }
+            }
             UsedCities.Add(city);
             return city;
+        }
+        public string GetLastLetter(string name)
+        {
+            string symbol = name.Last().ToString();;
+            if (symbol == "ь" || symbol == "ъ" || symbol == "ы")
+                symbol = name[name.Length - 2].ToString();
+            return symbol;
         }
     }
 }

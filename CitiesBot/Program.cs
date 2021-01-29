@@ -11,6 +11,7 @@ namespace CitiesBot
         static private string key = "1574797346:AAH5zYFinhCmrKtrbUuX8b2YdvS0LR5bdmc";
         static private Telega bot;
         static private DataManager manager = new DataManager();
+        static char lastEndLetter = ' ';
 
         static void Main(string[] args)
         {
@@ -27,19 +28,26 @@ namespace CitiesBot
         static async private void Bot_GotMessage(Telega bot, string msg, long chatid)
         {
             string answer;
-            if (manager.IsCityUsed(msg))
-                answer = "Уже было";
-            else if (!manager.IsCityExist(msg))
-                answer = "Не знаю такой город:(";
-            else
+            if (lastEndLetter == msg.First() || lastEndLetter == ' ')
             {
-                answer = manager.GetRandomCity(msg);
-                if (answer == "404")
+                if (manager.IsCityUsed(msg))
+                    answer = "Уже было";
+                else if (!manager.IsCityExist(msg))
+                    answer = "Не знаю такой город:(";
+                else
                 {
-                    answer = "Ты выиграл! Начинаем заново";
-                    manager.StartAgain();
+                    answer = manager.GetRandomCity(msg);
+                    lastEndLetter = manager.GetLastLetter(answer).ToCharArray()[0];
+                    if (answer == "404")
+                    {
+                        answer = "Ты выиграл! Начинаем заново";
+                        manager.StartAgain();
+                        lastEndLetter = ' ';
+                    }
                 }
             }
+            else
+                answer = "Что то тут не так";
             await Task.Run(() =>
                         bot.TextMessage(answer, chatid));
         }

@@ -12,7 +12,7 @@ namespace CitiesBot
         public List<string> Cities;
         public List<string> BigCities;
         private string citiespath = @"Txts\allcities.txt";
-        private string bigcitiespath = @"Txts\allcities.txt";
+        private string bigcitiespath = @"Txts\bigcities.txt";
         public DataManager()
         {
             Cities = new List<string>();
@@ -63,10 +63,11 @@ namespace CitiesBot
             IEnumerable<string> list = File.ReadAllLines(citiespath);
             return list.Contains(CityNameHandler(name.ToLower()));
         }
-        public string GetRandomCity()
+        public string GetRandomCityOnLetter(char symbol)
         {
             Random rnd = new Random();
-            string[] list = File.ReadAllLines(bigcitiespath);
+            string[] list = File.ReadAllLines(bigcitiespath).
+                Where(e => e.StartsWith(symbol.ToString().ToUpper())).ToArray();
             string city = list[rnd.Next(list.Length)];
             return city;
         }

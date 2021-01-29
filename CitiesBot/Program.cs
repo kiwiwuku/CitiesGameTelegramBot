@@ -18,7 +18,7 @@ namespace CitiesBot
             Console.WriteLine("Бот запущен");
             while (true)
             {
-                Console.WriteLine(manager.GetRandomCity());
+                Console.WriteLine(manager.GetRandomCityOnLetter('а'));
                 Console.ReadKey();
             }
         }

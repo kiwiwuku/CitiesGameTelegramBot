@@ -11,13 +11,19 @@ namespace CitiesBot
     {
         public List<string> Cities;
         public List<string> BigCities;
+        public List<string> UsedCities;
         private string citiespath = @"Txts\allcities.txt";
         private string bigcitiespath = @"Txts\bigcities.txt";
         public DataManager()
         {
             Cities = new List<string>();
             BigCities = new List<string>();
+            UsedCities = new List<string>();
             GetLists();
+        }
+        public void StartAgain()
+        {
+            UsedCities = new List<string>();
         }
         private void GetLists()
         {
@@ -60,15 +66,33 @@ namespace CitiesBot
         }
         public bool IsCityExist(string name)
         {
-            IEnumerable<string> list = File.ReadAllLines(citiespath);
-            return list.Contains(CityNameHandler(name.ToLower()));
+            string city = CityNameHandler(name.ToLower());
+            bool result = Cities.Contains(city);
+            if (result)
+                UsedCities.Add(city);
+            return result;
         }
-        public string GetRandomCityOnLetter(char symbol)
+        public bool IsCityUsed(string name)
         {
+            return UsedCities.Contains(CityNameHandler(name.ToLower()));
+        }
+        public string GetRandomCity(string name)
+        {
+            string symbol = name.Last().ToString();
             Random rnd = new Random();
-            string[] list = File.ReadAllLines(bigcitiespath).
-                Where(e => e.StartsWith(symbol.ToString().ToUpper())).ToArray();
+            if (symbol == "ь" || symbol == "ъ" || symbol == "ы")
+                symbol = name[name.Length - 2].ToString();
+            string[] list = BigCities.
+                Where(e => e.StartsWith(symbol.ToUpper())).ToArray();
+            if (list.Length == 0)
+            {
+                list = Cities.
+                    Where(e => e.StartsWith(symbol.ToUpper())).ToArray();
+                if (list.Length == 0)
+                    return "404";
+            }
             string city = list[rnd.Next(list.Length)];
+            UsedCities.Add(city);
             return city;
         }
     }

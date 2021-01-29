@@ -16,11 +16,7 @@ namespace CitiesBot
         {
             Initialize();
             Console.WriteLine("Бот запущен");
-            while (true)
-            {
-                Console.WriteLine(manager.GetRandomCityOnLetter('а'));
-                Console.ReadKey();
-            }
+            Console.ReadKey();
         }
         static private void Initialize()
         {
@@ -30,8 +26,22 @@ namespace CitiesBot
         }
         static async private void Bot_GotMessage(Telega bot, string msg, long chatid)
         {
+            string answer;
+            if (manager.IsCityUsed(msg))
+                answer = "Уже было";
+            else if (!manager.IsCityExist(msg))
+                answer = "Не знаю такой город:(";
+            else
+            {
+                answer = manager.GetRandomCity(msg);
+                if (answer == "404")
+                {
+                    answer = "Ты выиграл! Начинаем заново";
+                    manager.StartAgain();
+                }
+            }
             await Task.Run(() =>
-                bot.TextMessage("Ваше сообщение: " + msg, chatid));
+                        bot.TextMessage(answer, chatid));
         }
     }
 }

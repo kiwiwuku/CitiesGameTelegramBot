@@ -35,9 +35,9 @@ namespace CitiesBot
         {
             if (message.StartsWith("/"))
             {
-                var cmd = (message + " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0].ToLower().Substring(1);
+                var cmd = (message + " ").Split(' ', (char)StringSplitOptions.RemoveEmptyEntries)[0].ToLower().Substring(1);
                 var args = message.Substring(cmd.Length + 1).Split(' ', (char)StringSplitOptions.RemoveEmptyEntries);
-
+                GotCommand?.Invoke(this, cmd, args, chatid);
             }
             else
                 GotMessage?.Invoke(this, message, chatid);

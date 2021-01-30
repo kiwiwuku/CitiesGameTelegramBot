@@ -38,19 +38,22 @@ namespace CitiesBot
             string[] words = city.Split(' ');
             for (int i = 0; i < words.Length; i++)
             {
-                words[i] = ToUpper(words[i]);
-                if (words[i].Contains('-'))
+                if (words[i] != "")
                 {
-                    string[] arr = words[i].Split('-');
-                    foreach (var part in arr)
+                    words[i] = ToUpper(words[i]);
+                    if (words[i].Contains('-'))
                     {
-                        name += ToUpper(part) + "-";
+                        string[] arr = words[i].Split('-');
+                        foreach (var part in arr)
+                        {
+                            name += ToUpper(part) + "-";
+                        }
                     }
+                    else
+                        name += words[i] + " ";
                 }
-                else
-                    name += words[i] + " ";
             }
-            name = name.Remove(name.Length - 1, 1);
+            name = name.Remove(name.Length - 1, 1).Trim();
             return name;
         }
         private string ToUpper(string str)
@@ -63,6 +66,7 @@ namespace CitiesBot
         {
             string name = CityNameHandler(city);
             File.AppendAllText(citiespath, "\n" + name);
+            File.AppendAllText(bigcitiespath, "\n" + name);
         }
         public bool IsCityExist(string name)
         {

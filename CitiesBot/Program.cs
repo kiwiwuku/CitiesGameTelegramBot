@@ -37,7 +37,7 @@ namespace CitiesBot
                 if (cmdprocessor.CanProcess(cmd))
                     cmdprocessor.ProcessCommand(cmd, args, chatid);
                 else
-                    await _bot.TextMessage("Не удалось найти команду " + cmd, chatid);
+                    await _bot.TextMessage("Не удалось найти такую команду", chatid);
             });
         }
         static async private void Bot_GotMessage(Telega bot, string msg, long chatid)
@@ -75,13 +75,20 @@ namespace CitiesBot
         }
         static async private void AddCmd(long chatid, string[] args)
         {
-            string city = "";
-            foreach (var word in args)
-                city += word + " ";
-            city.Substring(city.Length - 1);
-            manager.AddCity(city);
+            string answer = "";
+            if (args[0] != "")
+            {
+                string city = "";
+                foreach (var word in args)
+                    city += word + " ";
+                city.Substring(city.Length - 1);
+                manager.AddCity(city);
+                answer = "Город добавлен! Продолжаем";
+            }
+            else
+                answer = "После команды /add нужно ввести название города";
             await Task.Run(() =>
-                            bot.TextMessage("Город добавлен! Продолжаем", chatid));
+                            bot.TextMessage(answer, chatid));
         }
         static async private void StartCmd(long chatid)
         {

@@ -8,11 +8,13 @@ namespace CitiesBot
 {
     public class CommandProcessor
     {
-        string[] _commands = { "сброс", "добавить" };
+        string[] _commands = { "newgame", "add", "start", "help" };
 
         public delegate void CmdDgt(long chatid);
         public delegate void CmdArgsDgt(long chatid, string[] args);
-        public event CmdDgt Clear;
+        public event CmdDgt NewGame;
+        public event CmdDgt Start;
+        public event CmdDgt Help;
         public event CmdArgsDgt Add;
 
         public bool CanProcess(string commandname)
@@ -26,11 +28,17 @@ namespace CitiesBot
 
             switch (commandname)
             {
-                case "сброс":
-                    Clear?.Invoke(chatid);
+                case "newgame":
+                    NewGame?.Invoke(chatid);
                     break;
-                case "добавить":
+                case "add":
                     Add?.Invoke(chatid, args);
+                    break;
+                case "start":
+                    Start?.Invoke(chatid);
+                    break;
+                case "help":
+                    Help?.Invoke(chatid);
                     break;
             }
         }

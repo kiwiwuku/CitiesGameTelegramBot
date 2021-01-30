@@ -25,8 +25,10 @@ namespace CitiesBot
             bot = new Telega(key);
             bot.GotMessage += Bot_GotMessage;
             bot.GotCommand += Bot_GotCommand;
-            cmdprocessor.Clear += ClearCmd;
+            cmdprocessor.NewGame += NewGameCmd;
             cmdprocessor.Add += AddCmd;
+            cmdprocessor.Help += HelpCmd;
+            cmdprocessor.Start += StartCmd;
         }
         static async private void Bot_GotCommand(Telega _bot, string cmd, string[] args, long chatid)
         {
@@ -41,7 +43,7 @@ namespace CitiesBot
         static async private void Bot_GotMessage(Telega bot, string msg, long chatid)
         {
             string answer;
-            if (lastEndLetter == msg.First() || lastEndLetter == ' ')
+            if (lastEndLetter == msg.ToLower().First() || lastEndLetter == ' ')
             {
                 if (manager.IsCityUsed(msg))
                     answer = "Уже было";
@@ -60,11 +62,11 @@ namespace CitiesBot
                 }
             }
             else
-                answer = "Что то тут не так";
+                answer = "Что-то тут не так";
             await Task.Run(() =>
                             bot.TextMessage(answer, chatid));
         }
-        static async private void ClearCmd(long chatid)
+        static async private void NewGameCmd(long chatid)
         {
             manager.StartAgain();
             lastEndLetter = ' ';
@@ -80,6 +82,25 @@ namespace CitiesBot
             manager.AddCity(city);
             await Task.Run(() =>
                             bot.TextMessage("Город добавлен! Продолжаем", chatid));
+        }
+        static async private void StartCmd(long chatid)
+        {
+            string welcome = "Привет! Первый ход всегда твой.";
+            await Task.Run(() =>
+                            bot.TextMessage(welcome, chatid));
+        }
+        static async private void HelpCmd(long chatid)
+        {
+            string help =
+                "Помощь \n" +
+                "Названия городов нужно вводить полные, со всеми дефисами и пробелами. Регистром можно пренебречь. \n" +
+                "Если бот перестанет отвечать, перезапустите его. \n" +
+                "Список команд: \n" +
+                "/help - помощь, список всех команд \n" +
+                "/newgame - начать новую игру \n" +
+                "/add [название города] - научить бота существующему городу, который он не знает \n";         
+            await Task.Run(() =>
+                            bot.TextMessage(help, chatid));
         }
     }
 }

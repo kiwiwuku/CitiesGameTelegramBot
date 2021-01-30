@@ -114,7 +114,7 @@ namespace CitiesBot
         public string GetLastLetter(string name)
         {
             string symbol = name.Last().ToString();;
-            if (symbol == "ь" || symbol == "ъ" || symbol == "ы")
+            if (symbol == "ь" || symbol == "ъ" || symbol == "ы" || symbol == "ц")
                 symbol = name[name.Length - 2].ToString();
             return symbol;
         }
